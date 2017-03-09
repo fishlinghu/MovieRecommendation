@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<script src="js/givepermission.js"></script>
 <head>
   <meta charset="utf-8">
   <title>DiscoverMovie</title>
@@ -49,7 +50,6 @@
     </header>
 
     <div class="message">
-      <a class="twitter-link" href="http://twitter.com/home/?status=I just hosted a website on AWS!"><img src="img/tweet.svg" /></a>
       <div class="text">
         <h2>This website is for Gatech CSE 6242 class project</h2>
         <h2>TMDB APIs will be used</h2>
@@ -58,20 +58,20 @@
           <p id="request_token"></p>
           <br />
         </p>
+        <p>
+          <form>
+            <input type="button" id="getInfoButton"></input>
+          </form>
+        </p>
       </div>
     </div>
     <div class="push"></div>
   </div>
-
+  <script src="js/set-background.js"></script>
   <footer>
-    <p class="footer-contents">Designed and developed with
-      <a href="https://www.amazon.jobs/en/search?base_query=&offset=0&location%5B%5D=berlin-germany">
-        ♥
-      </a>
-      in Berlin.
+    <p class="footer-contents">
+      Designed in Georgia Tech
     </p>
   </footer>
-  
-  <script src="js/set-background.js"></script>
 </body>
 </html>
