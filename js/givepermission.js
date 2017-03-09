@@ -1,28 +1,8 @@
 window.onload = initAll;
 var req;
 var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
-var userID = "";
-
-function checkToken() {
-    var request_token = getCookie("request_token");
-    if (request_token != "") {
-        alert("Already got the token " + request_token);
-        // send the request for user ID
-        checkUserPermission();
-    } else {
-        send_requestToken();
-    }
-}
-
-function checkUserPermission(){
-    var userID = getCookie("userID");
-    if(userID != ""){
-        alert("Logged in as " + userID);
-    }
-    else{
-        //send_requestToken();
-    }
-}
+var session_id = "";
+var username = "";
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -45,6 +25,28 @@ function getCookie(cname) {
         }
     }
     return "";
+}
+
+function checkToken() {
+    var request_token = getCookie("request_token");
+    if (request_token != "") {
+        alert("Already got the token " + request_token);
+        // no need the request session ID here, if we already got the session ID, dont request it again
+        checkUserPermission();
+    } else {
+        send_requestToken();
+    }
+}
+
+function checkUserPermission(){
+    var username = getCookie("username");
+    if(username != ""){
+        alert("Logged in as " + username);
+    }
+    else{
+        // check if we got the session ID
+        send_request_username();
+    }
 }
 
 function initAll()
@@ -78,3 +80,51 @@ function get_requestToken()
         //then you can create new session id
         }
 	}
+
+/******** get sessionID *********/
+
+function send_request_sessionID(){
+    req = new XMLHttpRequest();
+    var requestURL = "&api_key=" + apiKey; // finish the url
+    req.open("GET", requestURL);
+    req.onreadystatechange = get_request_sessionID;
+    req.send(null);
+}
+
+function get_request_sessionID()
+    {
+    if (req.readyState == 4) 
+        { 
+        alert(req.responseText);
+        console.log(req.responseText);
+        document.getElementById('session_id').innerHTML = this.responseText;
+        var resp = this.responseText;
+        var jsonResp = JSON.parse(resp);
+        setCookie("session_id", jsonResp["session_id"], 1);
+        }
+    }
+
+/******** get user name *********/
+
+function send_request_username(){
+    req = new XMLHttpRequest();
+    var requestusernameURL = "https://api.themoviedb.org/3/account?session_id=" + session_id + "&api_key=" + apiKey;
+    //console.log("HI");
+    //req.open("GET", "https://api.themoviedb.org/3/authentication/token/new?api_key=2d6aea1c2b693ee6f1ad40db73f53ea1");
+    req.open("GET", requestusernameURL);
+    req.onreadystatechange = get_request_username;
+    req.send(null);
+}
+
+function get_request_username()
+    {
+    if (req.readyState == 4) 
+        { 
+        alert(req.responseText);
+        console.log(req.responseText);
+        document.getElementById('username').innerHTML = this.responseText;
+        var resp = this.responseText;
+        var jsonResp = JSON.parse(resp);
+        setCookie("username", jsonResp["username"], 1);
+        }
+    }
