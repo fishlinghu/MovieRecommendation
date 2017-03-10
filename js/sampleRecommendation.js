@@ -1,6 +1,29 @@
-window.onload = ;
+window.onload = request_favorite_movie;
 var req;
 var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
 
 function clearCookie(){
     setCookie("request_token", "", 1);
@@ -12,7 +35,9 @@ function request_favorite_movie(){
 	req = new XMLHttpRequest();
     var requestURL = "https://api.themoviedb.org/3/account/" + getCookie("username") 
     							+ "/favorite/movies?api_key=" + apiKey
+    							+ "&session_id=" + getCookie("session_id") 
     							+ "&language=en-US&sort_by=created_at.asc";
+    console.log( requestURL );
     req.open("GET", requestURL);
     req.onreadystatechange = get_favorite_movie;
     req.send(null);
@@ -23,7 +48,7 @@ function get_favorite_movie(){
         { 
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
-        if(jsonResp.hasOwnProperty('')) // successfully get valid respond
+        if(jsonResp.hasOwnProperty('page')) // successfully get valid respond
             {   
             alert("favorite movies: " + req.responseText);
             console.log(req.responseText);
