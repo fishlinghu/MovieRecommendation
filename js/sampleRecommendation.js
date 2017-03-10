@@ -54,6 +54,10 @@ function get_favorite_movie(){
             console.log(req.responseText);
             //document.getElementById('username').innerHTML = this.responseText;
             //setCookie("username", jsonResp["username"], 1);
+            var list_of_json = jsonResp["results"];
+            // adult, backdrop_path, genre_ids, id, original_language, original_title, overview, release_date, poster_path, popularity, title, video, vote_average, vote_count
+            // genre_ids is a list of numbers
+            recommend_movie(list_of_json);
             }
         else // we do not have a valid session ID, let's request it
             {
@@ -69,4 +73,15 @@ function get_favorite_movie(){
             window.location.href = "http://aws-website-discovermovie-csf77.s3-website-us-east-1.amazonaws.com/";
             }
         }
+}
+
+function recommend_movie(list_of_json){
+	var array_movieID = [];
+
+	// traverse through user's favorite movies' list and gather information
+	for (var i = list_of_json.length - 1; i >= 0; i--) {
+		array_movieID.push(list_of_json[i]["id"]);
+	}
+	// get the information of movie using request
+	// output the recommended movie information to html
 }
