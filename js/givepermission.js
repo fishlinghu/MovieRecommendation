@@ -1,8 +1,6 @@
-window.onload = initAll;
+window.onload = checkToken;
 var req;
 var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
-var session_id = "";
-var username = "";
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -27,15 +25,24 @@ function getCookie(cname) {
     return "";
 }
 
+function clearCookie(){
+    setCookie("request_token", "", 1);
+    setCookie("session_id", "", 1);
+    setCookie("username", "", 1);
+}
+
 function checkToken() {
+    //send_requestToken();
+    
     var request_token = getCookie("request_token");
     if (request_token != "") {
         alert("Already got the token " + request_token);
-        // no need the request session ID here, if we already got the session ID, dont request it again
-        checkUserPermission();
+        send_request_sessionID();
+        //checkUserPermission();
     } else {
         send_requestToken();
     }
+    
 }
 
 function checkUserPermission(){
@@ -44,22 +51,21 @@ function checkUserPermission(){
         alert("Logged in as " + username);
     }
     else{
-        // check if we got the session ID
         send_request_username();
     }
 }
 
+/*
 function initAll()
 	{
     document.getElementById("getInfoButton").onclick = checkToken;
 	}
+*/
 
 function send_requestToken()
 	{
     req = new XMLHttpRequest();
     var requestTokenURL = "https://api.themoviedb.org/3/authentication/token/new?api_key=" + apiKey;
-    //console.log("HI");
-    //req.open("GET", "https://api.themoviedb.org/3/authentication/token/new?api_key=2d6aea1c2b693ee6f1ad40db73f53ea1");
     req.open("GET", requestTokenURL);
     req.onreadystatechange = get_requestToken;
     req.send(null);
@@ -69,15 +75,14 @@ function get_requestToken()
 	{
     if (req.readyState == 4) 
         { 
-        alert(req.responseText);
+        alert("get request token: " + req.responseText);
         console.log(req.responseText);
         document.getElementById('request_token').innerHTML = this.responseText;
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
         setCookie("request_token", jsonResp["request_token"], 1);
-        //window.location.href = "https://www.themoviedb.org/authenticate/"+ jsonResp["request_token"];
+        window.location.href = "https://www.themoviedb.org/authenticate/"+ getCookie("request_token");
         //window.location.href = "https://www.themoviedb.org/authenticate/"+ jsonResp["request_token"] +"?redirect_to=http://aws-website-discovermovie-csf77.s3-website-us-east-1.amazonaws.com/";
-        //then you can create new session id
         }
 	}
 
@@ -85,7 +90,7 @@ function get_requestToken()
 
 function send_request_sessionID(){
     req = new XMLHttpRequest();
-    var requestURL = "&api_key=" + apiKey; // finish the url
+    var requestURL = "https://api.themoviedb.org/3/authentication/session/new?api_key=" + apiKey + "&request_token=" + getCookie("request_token"); // finish the url
     req.open("GET", requestURL);
     req.onreadystatechange = get_request_sessionID;
     req.send(null);
@@ -95,12 +100,28 @@ function get_request_sessionID()
     {
     if (req.readyState == 4) 
         { 
-        alert(req.responseText);
         console.log(req.responseText);
-        document.getElementById('session_id').innerHTML = this.responseText;
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
-        setCookie("session_id", jsonResp["session_id"], 1);
+        if(jsonResp.hasOwnProperty('session_id')) // successfully get session ID
+            {   
+            alert("get session ID: " + req.responseText);
+            //document.getElementById('session_id').innerHTML = this.responseText;
+            setCookie("session_id", jsonResp["session_id"], 1);
+            // get user name
+            // store it in the cookie
+            // so later operations could use the username directly with session ID
+            // if any request fail due to session ID
+            // it should fall into the else part
+            // and we go back to the initial state
+            send_request_username();
+            // basically, all request function that used session ID should follow the structure of send_request_username() exactly
+            }
+        else // fail to get session ID
+            {   
+            alert("Need user authorization");
+            send_requestToken();
+            }
         }
     }
 
@@ -108,9 +129,7 @@ function get_request_sessionID()
 
 function send_request_username(){
     req = new XMLHttpRequest();
-    var requestusernameURL = "https://api.themoviedb.org/3/account?session_id=" + session_id + "&api_key=" + apiKey;
-    //console.log("HI");
-    //req.open("GET", "https://api.themoviedb.org/3/authentication/token/new?api_key=2d6aea1c2b693ee6f1ad40db73f53ea1");
+    var requestusernameURL = "https://api.themoviedb.org/3/account?session_id=" + getCookie("session_id") + "&api_key=" + apiKey;
     req.open("GET", requestusernameURL);
     req.onreadystatechange = get_request_username;
     req.send(null);
@@ -120,11 +139,27 @@ function get_request_username()
     {
     if (req.readyState == 4) 
         { 
-        alert(req.responseText);
-        console.log(req.responseText);
-        document.getElementById('username').innerHTML = this.responseText;
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
-        setCookie("username", jsonResp["username"], 1);
+        if(jsonResp.hasOwnProperty('username')) // we have a valid session ID and get the username
+            {   
+            alert("get username: " + req.responseText);
+            console.log(req.responseText);
+            //document.getElementById('username').innerHTML = this.responseText;
+            setCookie("username", jsonResp["username"], 1);
+            }
+        else // we do not have a valid session ID, let's request it
+            {
+            alert("cannot get username: " + req.responseText);
+            console.log(req.responseText); 
+            // important step
+            // when we fail to retrieve information because of session_id
+            // clear all information in cookie
+            // get a new token
+            // request user authorization again  
+            // get a new session_id
+            clearCookie();
+            checkToken();
+            }
         }
     }
