@@ -35,11 +35,15 @@ function checkToken() {
     //send_requestToken();
     
     var request_token = getCookie("request_token");
-    if (request_token != "") {
+    var session_id = getCookie("session_id");
+    if (request_token != "" && session_id == "") {
         alert("Already got the token " + request_token);
         send_request_sessionID();
-        //checkUserPermission();
-    } else {
+    }
+    else if(request_token != "" && session_id != ""){
+        alert("Already got the token " + request_token + " and session_id " + session_id);
+    } 
+    else {
         send_requestToken();
     }
     
