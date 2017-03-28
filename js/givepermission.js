@@ -42,6 +42,7 @@ function checkToken() {
     }
     else if(request_token != "" && session_id != ""){
         alert("Already got the token " + request_token + " and session_id " + session_id);
+        document.getElementById('username').innerHTML = getCookie("username");
     } 
     else {
         request_requestToken();
@@ -81,7 +82,7 @@ function get_requestToken()
         { 
         alert("get request token: " + req.responseText);
         console.log(req.responseText);
-        document.getElementById('request_token').innerHTML = this.responseText;
+        //document.getElementById('request_token').innerHTML = this.responseText;
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
         setCookie("request_token", jsonResp["request_token"], 1);
