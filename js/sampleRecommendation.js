@@ -52,6 +52,11 @@ function get_favorite_movie(){
             {   
             alert("favorite movies: " + req.responseText);
             console.log(req.responseText);
+            // recommendation algorithm
+            // some more query
+            // get the result
+            // print in html
+
             //document.getElementById('username').innerHTML = this.responseText;
             //setCookie("username", jsonResp["username"], 1);
             var list_of_json = jsonResp["results"];
