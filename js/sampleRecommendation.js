@@ -2,6 +2,9 @@ window.onload = request_favorite_movie;
 var req;
 var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
 
+var array_movieID = [];
+var array_movieDetail = [];
+
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -80,13 +83,33 @@ function get_favorite_movie(){
         }
 }
 
-function recommend_movie(list_of_json){
-	var array_movieID = [];
+function request_movie_details(movieID){
+    req = new XMLHttpRequest();
+    var requestURL = "https://api.themoviedb.org/3/movie/"+ movieID + "?api_key=" + apiKey + "&language=en-US";
 
+    console.log( requestURL );
+    req.open("GET", requestURL);
+    req.onreadystatechange = get_movie_details;
+    req.send(null);
+}
+
+function get_movie_details(){
+    if (req.readyState == 4){
+        var resp = this.responseText;
+        var jsonResp = JSON.parse(resp);
+
+        array_movieDetail.push( jsonResp );
+    } 
+}
+
+function recommend_movie(list_of_json){
 	// traverse through user's favorite movies' list and gather information
 	for (var i = list_of_json.length - 1; i >= 0; i--) {
 		array_movieID.push(list_of_json[i]["id"]);
+        request_movie_details( list_of_json[i]["id"] );
 	}
+
+
 	// get the information of movie using request
 	// output the recommended movie information to html
 }
