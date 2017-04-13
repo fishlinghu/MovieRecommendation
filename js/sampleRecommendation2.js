@@ -103,13 +103,16 @@ function get_movie_details(){
 }
 
 function printToHTML(){
-    var output = "";
+    var output = "abc";
+    output = output + array_movieDetail[0];
+
     for(i=0; i < array_movieDetail.length; i++){
         output = output + "Title: " + array_movieDetail[i]["original_title"] + "<br>";
     }
 
     document.getElementById("movieDetail").innerHTML = output;
 }
+
 
 function recommend_movie(list_of_json){
 	// traverse through user's favorite movies' list and gather information
