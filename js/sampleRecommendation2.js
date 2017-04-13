@@ -3,7 +3,12 @@ var req;
 var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
 
 var array_movieID = [];
-var array_movieDetail = [];
+var dict_movieDetail = {};
+var output = "";
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -51,9 +56,10 @@ function get_favorite_movie(){
         { 
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
+        //alert(jsonResp);
         if(jsonResp.hasOwnProperty('page')) // successfully get valid respond
             {   
-            alert("favorite movies: " + req.responseText);
+            //alert("favorite movies: " + req.responseText);
             console.log(req.responseText);
             // recommendation algorithm
             // some more query
@@ -69,7 +75,7 @@ function get_favorite_movie(){
             }
         else // we do not have a valid session ID, let's request it
             {
-            alert("cannot get favorite movies: " + req.responseText);
+            //alert("cannot get favorite movies: " + req.responseText);
             console.log(req.responseText); 
             // important step
             // when we fail to retrieve information because of session_id
@@ -86,6 +92,7 @@ function get_favorite_movie(){
 function request_movie_details(movieID){
     req = new XMLHttpRequest();
     var requestURL = "https://api.themoviedb.org/3/movie/"+ movieID + "?api_key=" + apiKey + "&language=en-US";
+    //alert(requestURL);
 
     console.log( requestURL );
     req.open("GET", requestURL);
@@ -94,33 +101,34 @@ function request_movie_details(movieID){
 }
 
 function get_movie_details(){
-    if (req.readyState == 4){
+    if (req.readyState == 4){    
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
-
-        array_movieDetail.push( jsonResp );
+        //alert("favorite movies: " + jsonResp["original_title"]);
+        console.log(req.responseText);
+        
+        if(!(jsonResp["id"] in window.dict_movieDetail)){
+            window.dict_movieDetail[ jsonResp["id"] ] = jsonResp;
+            window.output = window.output + "Title: " + jsonResp["original_title"] + "<br>";
+            document.getElementById("movieDetail").innerHTML = window.output;
+        }
     } 
-}
-
-function printToHTML(){
-    var output = "abc";
-    output = output + array_movieDetail[0];
-
-    for(i=0; i < array_movieDetail.length; i++){
-        output = output + "Title: " + array_movieDetail[i]["original_title"] + "<br>";
+    else{
+        alert("Loading movie");
+        console.log(req.responseText); 
+        // wtf no alert, no respond?????????? fuck
     }
-
-    document.getElementById("movieDetail").innerHTML = output;
 }
-
 
 function recommend_movie(list_of_json){
 	// traverse through user's favorite movies' list and gather information
+    
 	for (var i = list_of_json.length - 1; i >= 0; i--) {
-		array_movieID.push(list_of_json[i]["id"]);
-        request_movie_details( list_of_json[i]["id"] );
+        //alert("id: " + list_of_json[i]["id"]);
+		window.array_movieID.push(list_of_json[i]["id"]);
+        window.request_movie_details( list_of_json[i]["id"] );
+        //sleep(2000);
 	}
-    printToHTML();
 
 	// get the information of movie using request
 	// output the recommended movie information to html
