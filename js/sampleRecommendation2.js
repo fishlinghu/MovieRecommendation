@@ -4,7 +4,7 @@ var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
 
 var array_movieID = [];
 var dict_movieDetail = {};
-var output = "";
+var output = '<tr class="headerrow"><th>Title</th><th>Genres</th><th>Rating</th><th>Language</th><th>Release Date</th><th>Overview</th></tr>';
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -109,7 +109,15 @@ function get_movie_details(){
         
         if(!(jsonResp["id"] in window.dict_movieDetail)){
             window.dict_movieDetail[ jsonResp["id"] ] = jsonResp;
-            window.output = window.output + "Title: " + jsonResp["original_title"] + "<br>";
+            window.output = window.output +'<tr class = "datarowodd">'
+                                          + "<td>" + jsonResp["original_title"] + "</td>"
+                                          + "<td>"+ jsonResp["genres"] + "</td>"
+                                          + "<td>" + jsonResp["vote_average"] + "</td>"
+                                          + "<td>" + jsonResp["original_language"] + "</td>"
+                                          + "<td>" + jsonResp["release_date"] + "</td>"
+                                          + "<td>" + jsonResp["overview"] + "</td>"
+                                          + "</tr>";
+                                         
             document.getElementById("movieDetail").innerHTML = window.output;
         }
     } 
