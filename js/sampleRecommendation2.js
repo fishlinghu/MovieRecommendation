@@ -4,7 +4,7 @@ var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
 
 var array_movieID = [];
 var dict_movieDetail = {};
-var output = '<tr class="headerrow"><th>Title</th><th>Genres</th><th>Rating</th><th>Language</th><th>Release Date</th><th>Overview</th></tr>';
+var output = '<tr class="headerrow"><th>Poster</th><th>Title</th><th>Genres</th><th>Rating</th><th>Language</th><th>Release Date</th><th>Overview</th></tr>';
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -109,9 +109,17 @@ function get_movie_details(){
         
         if(!(jsonResp["id"] in window.dict_movieDetail)){
             window.dict_movieDetail[ jsonResp["id"] ] = jsonResp;
+            var temp = jsonResp["genres"];
+            var genreStr = "";
+            var homepage = jsonResp["homepage"];
+            for(var i = temp.length - 1; i >= 0; i--){
+                genreStr = genreStr + temp[i]["name"] + ", ";
+            }
+            var makeUrl = "https://www.themoviedb.org/movie/" + jsonResp["id"] + "-" + jsonResp["title"].toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
             window.output = window.output +'<tr class = "datarowodd">'
-                                          + "<td>" + jsonResp["original_title"] + "</td>"
-                                          + "<td>"+ jsonResp["genres"] + "</td>"
+                                          + '<td><img src="img/1.png" alt="" border=3 height=200 width=200></img></td>'
+                                          + "<td><a href=" + makeUrl + ">" + jsonResp["original_title"] + "</a></td>"
+                                          + "<td>"+ genreStr + "</td>"
                                           + "<td>" + jsonResp["vote_average"] + "</td>"
                                           + "<td>" + jsonResp["original_language"] + "</td>"
                                           + "<td>" + jsonResp["release_date"] + "</td>"
