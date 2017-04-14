@@ -109,6 +109,78 @@ function recommend_movie(list_of_json){
         request_movie_details( list_of_json[i]["id"] );
 	}
 
+    var indices = [];
+
+    d3.csv("Node_list.csv", function(error, movielist){
+        if(error) throw error;
+
+        array_movieID.foreach(i){
+            if(!movielist.indexOf(i) === -1){
+                 indices.push(movielist.indexOf(i));
+            }
+        }
+
+        d3.csv("Final_output.csv", function(error, rmatrix){
+            if(error) throw error;
+
+            //Store vectors of favorite movie
+            var stored_vectors = [];
+            indices.foreach(function(i){
+            //foreach favorite movie, store its vector 
+                var stored = [];
+                rmatrix.foreach(function(d){
+                    stored.push(+d[i]); //make element as a number
+                });
+                stored_vectors.push(stored);
+            });
+
+            //Calculate relevance scores
+            var relevance_scores = [];
+            var temp_product;
+            for(var i = 0; i < stored.length; i++){
+                relevance_scores.push(1 - temp_product);
+                temp_product = 1;
+                for(var j = 0; j< indices.length; j++){
+                    temp_product *= (1 - stored_vectors[j][i]);
+                }
+            }
+
+            d3.csv("Bridge_score.csv", function(error, bridgescore){
+                if(error) throw error;
+
+                var bridge_scores = [];
+                bridgescore.foreach(function(d){
+                    bridge_scores.push(+d);
+                });
+
+                //The final score is given by bridge_score multiply relevance score
+                var final_scores = [];
+                for(var i = 0; i<bridge_scores.length; i++){
+                    if(indices.indexOf(i) === -1){
+                        final_scores.push(bridge_scores[i]*relevance_scores[i]);
+                    }
+                    else {
+                        final_scores.push(0);
+                    }
+                }
+
+                var temp_final = final_scores;
+
+                final_scores.sort(function(a,b){
+                    return a-b;
+                });
+
+                var final_movieID = [];
+
+                for(var i = 0; i<10; i++){
+                    final_movieID.push(movielist[temp_final.indexOf(final_scores[i])]);
+                }
+
+
+
+            });
+        });
+    });
 
 	// get the information of movie using request
 	// output the recommended movie information to html
