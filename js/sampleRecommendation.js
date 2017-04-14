@@ -2,7 +2,6 @@ window.onload = request_favorite_movie;
 var req;
 var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
 
-var array_movieID = [];
 var array_movieDetail = [];
 
 function setCookie(cname, cvalue, exdays) {
@@ -53,7 +52,7 @@ function get_favorite_movie(){
         var jsonResp = JSON.parse(resp);
         if(jsonResp.hasOwnProperty('page')) // successfully get valid respond
             {   
-            alert("favorite movies: " + req.responseText);
+            //alert("favorite movies: " + req.responseText);
             console.log(req.responseText);
             // recommendation algorithm
             // some more query
@@ -78,7 +77,6 @@ function get_favorite_movie(){
             // request user authorization again  
             // get a new session_id
             clearCookie();
-            window.location.href = "http://aws-website-discovermovie-csf77.s3-website-us-east-1.amazonaws.com/";
             }
         }
 }
@@ -104,6 +102,7 @@ function get_movie_details(){
 
 function recommend_movie(list_of_json){
 	// traverse through user's favorite movies' list and gather information
+    var array_movieID = [];
 	for (var i = list_of_json.length - 1; i >= 0; i--) {
 		array_movieID.push(list_of_json[i]["id"]);
         request_movie_details( list_of_json[i]["id"] );
@@ -114,30 +113,32 @@ function recommend_movie(list_of_json){
     d3.csv("Node_list.csv", function(error, movielist){
         if(error) throw error;
 
-        array_movieID.foreach(i){
-            if(!movielist.indexOf(i) === -1){
-                 indices.push(movielist.indexOf(i));
+        array_movieID.forEach(function(d){
+            if(!movielist.indexOf(d) === -1){
+                 indices.push(movielist.indexOf(d));
             }
-        }
+        });
 
         d3.csv("Final_output.csv", function(error, rmatrix){
             if(error) throw error;
 
             //Store vectors of favorite movie
             var stored_vectors = [];
-            indices.foreach(function(i){
+            var tempLen;
+            indices.forEach(function(i){
             //foreach favorite movie, store its vector 
                 var stored = [];
-                rmatrix.foreach(function(d){
+                rmatrix.forEach(function(d){
                     stored.push(+d[i]); //make element as a number
                 });
+                tempLen = stored.length;
                 stored_vectors.push(stored);
             });
 
             //Calculate relevance scores
             var relevance_scores = [];
             var temp_product;
-            for(var i = 0; i < stored.length; i++){
+            for(var i = 0; i < tempLen; i++){
                 relevance_scores.push(1 - temp_product);
                 temp_product = 1;
                 for(var j = 0; j< indices.length; j++){
@@ -145,11 +146,13 @@ function recommend_movie(list_of_json){
                 }
             }
 
+            console.log("relevance_scores");
+
             d3.csv("Bridge_score.csv", function(error, bridgescore){
                 if(error) throw error;
 
                 var bridge_scores = [];
-                bridgescore.foreach(function(d){
+                bridgescore.forEach(function(d){
                     bridge_scores.push(+d);
                 });
 
@@ -171,12 +174,15 @@ function recommend_movie(list_of_json){
                 });
 
                 var final_movieID = [];
+                var temp_index;
 
+                //Recommend top 10 ranked 
                 for(var i = 0; i<10; i++){
-                    final_movieID.push(movielist[temp_final.indexOf(final_scores[i])]);
+                    temp_index = temp_final.indexOf(final_scores[i]);
+                    console.log(temp_index);
+                    final_movieID.push(movielist[temp_index]);
                 }
-
-
+                console.log(final_movieID);
 
             });
         });
