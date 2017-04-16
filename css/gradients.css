@@ -1,5 +1,6 @@
 /* Gradients */
 .heaven-0 { background: #00000A; }
+/*
 .heaven-1 { background: linear-gradient(to bottom, #020214 85%,#191922 100%); }
 .heaven-2 { background: linear-gradient(to bottom, #020214 60%,#20202D 100%); }
 .heaven-3 { background: linear-gradient(to bottom, #020214 10%,#303054 100%); }
@@ -23,4 +24,28 @@
 .heaven-21 { background: linear-gradient(to bottom, #000A0F 30%,#5A230A 80%,#280A05 100%); }
 .heaven-22 { background: linear-gradient(to bottom, #0A0500 50%,#4B1E05 100%); }
 .heaven-23 { background: linear-gradient(to bottom, #00000A 80%,#140A00 100%); }
+*/
+.heaven-1 { background: #191922; }
+.heaven-2 { background: #20202D; }
+.heaven-3 { background: #303054; }
+.heaven-4 { background: #505070; }
+.heaven-5 { background: #8C78AA; }
+.heaven-6 { background: #C878A0; }
+.heaven-7 { background: #E6B4D2; }
+.heaven-8 { background: #F0B4B4; }
+.heaven-9 { background: #B4B4F0; }
+.heaven-10 { background: #96DCFF; }
+.heaven-11 { background: #64D2FA; }
+.heaven-12 { background: #37A0D2; }
+.heaven-13 { background: #236EAA; }
+.heaven-14 { background: #1E508C; }
+.heaven-15 { background: #5A7882; }
+.heaven-16 { background: #A0AA6E; }
+.heaven-17 { background: #EBD25A; }
+.heaven-18 { background: #B4643C; }
+.heaven-19 { background: #320F05; }
+.heaven-20 { background: #230F05; }
+.heaven-21 { background: #280A05; }
+.heaven-22 { background: #4B1E05; }
+.heaven-23 { background: #140A00; }
 .heaven-24 { background: #00000A; }
