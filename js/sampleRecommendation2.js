@@ -84,12 +84,13 @@ function get_favorite_movie(){
             // request user authorization again  
             // get a new session_id
             clearCookie();
-            window.location.href = "http://aws-website-discovermovie-csf77.s3-website-us-east-1.amazonaws.com/";
+            //window.location.href = "http://aws-website-discovermovie-csf77.s3-website-us-east-1.amazonaws.com/";
             }
         }
 }
 
 function request_movie_details(movieID){
+    sleep(2000);
     req = new XMLHttpRequest();
     var requestURL = "https://api.themoviedb.org/3/movie/"+ movieID + "?api_key=" + apiKey + "&language=en-US";
     //alert(requestURL);
@@ -101,7 +102,8 @@ function request_movie_details(movieID){
 }
 
 function get_movie_details(){
-    if (req.readyState == 4){    
+    if (req.readyState == 4){  
+        sleep(2000);  
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
         //alert("favorite movies: " + jsonResp["original_title"]);
@@ -131,6 +133,7 @@ function get_movie_details(){
     } 
     else{
         alert("Loading movie");
+        //sleep(2000);
         console.log(req.responseText); 
         // wtf no alert, no respond?????????? fuck
     }

@@ -2,7 +2,12 @@ window.onload = request_favorite_movie;
 var req;
 var apiKey = "2d6aea1c2b693ee6f1ad40db73f53ea1";
 
-var array_movieDetail = [];
+var dict_movieDetail = {};
+var output = '<tr class="headerrow"><th>Poster</th><th>Title</th><th>Genres</th><th>Rating</th><th>Language</th><th>Release Date</th><th>Overview</th></tr>';
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -91,6 +96,7 @@ function request_movie_details(movieID){
     req.send(null);
 }
 
+/*
 function get_movie_details(){
     if (req.readyState == 4){
         var resp = this.responseText;
@@ -99,13 +105,52 @@ function get_movie_details(){
         array_movieDetail.push( jsonResp );
     } 
 }
+*/
+
+function get_movie_details(){
+    if (req.readyState == 4){  
+        sleep(2000);  
+        var resp = this.responseText;
+        var jsonResp = JSON.parse(resp);
+        //alert("favorite movies: " + jsonResp["original_title"]);
+        console.log(req.responseText);
+        
+        if(!(jsonResp["id"] in window.dict_movieDetail)){
+            window.dict_movieDetail[ jsonResp["id"] ] = jsonResp;
+            var temp = jsonResp["genres"];
+            var genreStr = "";
+            var homepage = jsonResp["homepage"];
+            for(var i = temp.length - 1; i >= 0; i--){
+                genreStr = genreStr + temp[i]["name"] + ", ";
+            }
+            var makeUrl = "https://www.themoviedb.org/movie/" + jsonResp["id"] + "-" + jsonResp["title"].toLowerCase().replace(/[^a-zA-Z0-9]/g, "-");
+            window.output = window.output +'<tr class = "datarowodd">'
+                                          + '<td><img src="img/1.png" alt="" border=3 height=200 width=200></img></td>'
+                                          + "<td><a href=" + makeUrl + ">" + jsonResp["original_title"] + "</a></td>"
+                                          + "<td>"+ genreStr + "</td>"
+                                          + "<td>" + jsonResp["vote_average"] + "</td>"
+                                          + "<td>" + jsonResp["original_language"] + "</td>"
+                                          + "<td>" + jsonResp["release_date"] + "</td>"
+                                          + "<td>" + jsonResp["overview"] + "</td>"
+                                          + "</tr>";
+                                         
+            document.getElementById("movieDetail").innerHTML = window.output;
+        }
+    } 
+    else{
+        alert("Loading movie");
+        //sleep(2000);
+        console.log(req.responseText); 
+        // wtf no alert, no respond?????????? fuck
+    }
+}
 
 function recommend_movie(list_of_json){
 	// traverse through user's favorite movies' list and gather information
     var array_movieID = [];
 	for (var i = list_of_json.length - 1; i >= 0; i--) {
 		array_movieID.push(list_of_json[i]["id"]);
-        request_movie_details( list_of_json[i]["id"] );
+        //request_movie_details( list_of_json[i]["id"] );
 	}
 
     var indices = [];
@@ -202,11 +247,14 @@ function recommend_movie(list_of_json){
                     
                 }
                 console.log(final_movieID);
-
+                // get the information of movie using request
+                for (var i = final_movieID.length - 1; i >= 0; i--) {
+                    request_movie_details( final_movieID[i] );
+                }
+                // output the recommended movie information to html
             });
         });
     });
 
-	// get the information of movie using request
-	// output the recommended movie information to html
+	
 }

@@ -86,8 +86,9 @@ function get_requestToken()
         var resp = this.responseText;
         var jsonResp = JSON.parse(resp);
         setCookie("request_token", jsonResp["request_token"], 1);
-        window.location.href = "https://www.themoviedb.org/authenticate/"+ getCookie("request_token");
+        window.location.href = "https://www.themoviedb.org/authenticate/"+ jsonResp["request_token"];
         //window.location.href = "https://www.themoviedb.org/authenticate/"+ jsonResp["request_token"] +"?redirect_to=http://aws-website-discovermovie-csf77.s3-website-us-east-1.amazonaws.com/";
+        //window.location.href = "https://www.themoviedb.org/authenticate/"+ jsonResp["request_token"] +"?redirect_to=https://dp5ea9gkxz3xh.cloudfront.net";
         }
 	}
 
