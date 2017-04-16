@@ -143,7 +143,7 @@ function recommend_movie(list_of_json){
                 stored_vectors.push(stored);
             });
 
-            console.log("stored_vectors:", stored_vectors);
+            console.log("stored_vectors:");
             //Calculate relevance scores
             var relevance_scores = [];
             var temp_product = 1;
@@ -155,8 +155,7 @@ function recommend_movie(list_of_json){
                 temp_product = 1;
             }
 
-            console.log("stored_vectors:", stored_vectors[0][9105],stored_vectors[0][9260],stored_vectors[0][9702]);
-            console.log("relevance_scores:"+relevance_scores[9105]);
+            console.log("relevance_scores:");
 
             d3.csv("Bridge_score.csv", function(error, bridgescore){
                 if(error) throw error;
@@ -177,28 +176,27 @@ function recommend_movie(list_of_json){
                     }
                 }
 
-                console.log("final_scores:",final_scores[671], final_scores[672]);
+                console.log("final_scores:");
 
 
-                var sliced_final = final_scores.slice(672);
                 var final_movieID = [];
                 var temp_index;
                 var curmax = 0;
-                var prevmax = d3.max(sliced_final, function(d){ return d; });
+                var prevmax = d3.max(final_scores, function(d){ return d; });
                 final_movieID.push(lmovielist[final_scores.indexOf(prevmax)]);
                 var nfavorive = 10;
 
                 //Recommend top 10 ranked 
                 for(var i = 1; i<nfavorive; i++){
                     var j = 0;
-                    sliced_final.forEach(function(d){
+                    final_scores.forEach(function(d){
                         if(d>curmax && d < prevmax){
                             curmax = d;
                             temp_index = j;
                         }
                         j++;
                     });
-                    final_movieID.push(lmovielist[temp_index+672]);
+                    final_movieID.push(lmovielist[temp_index]);
                     prevmax = curmax;
                     curmax = 0;
                     
